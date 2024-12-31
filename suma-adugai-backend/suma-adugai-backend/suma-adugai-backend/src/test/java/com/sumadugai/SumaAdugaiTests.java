@@ -1,10 +1,10 @@
-package com.sumadugai.suma_adugai_backend;
+package com.sumadugai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SumaAdugaiBackendApplicationTests {
+class SumaAdugaiTests {
 	
 	@Test
 	void contextLoads() {

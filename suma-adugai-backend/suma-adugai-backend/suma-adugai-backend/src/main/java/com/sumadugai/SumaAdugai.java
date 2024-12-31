@@ -1,13 +1,13 @@
-package com.sumadugai.suma_adugai_backend;
+package com.sumadugai;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SumaAdugaiBackendApplication {
+public class SumaAdugai {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SumaAdugaiBackendApplication.class, args);
+		SpringApplication.run(SumaAdugai.class, args);
 		System.out.println("Hello spring");
 	}
 
