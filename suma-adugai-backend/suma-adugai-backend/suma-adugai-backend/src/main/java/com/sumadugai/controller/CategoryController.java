@@ -22,7 +22,7 @@ public class CategoryController {
     @PostMapping("/admin/category")
     public ResponseEntity<Category> createdCategory(
             @RequestHeader("Authorization")String jwt,
-            @RequestBody Category category) throws Exception, Exception {
+            @RequestBody Category category) throws  Exception {
         User user=userService.findUserProfileByJwt(jwt);
 
         Category createdCategory=categoryService.createCategory(category.getName(), user.getId());
