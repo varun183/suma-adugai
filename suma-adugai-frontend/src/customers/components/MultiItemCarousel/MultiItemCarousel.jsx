@@ -2,7 +2,7 @@ import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import { topMeals } from "../../Data/topMeals";
+import { topMeals } from "../../../Data/topMeals";
 import CarouselItem from "./CarouselItem";
 
 const responsive = [
@@ -42,7 +42,7 @@ const MultiItemCarousel = () => {
     autoplay: true,
     autoplaySpeed: 2000,
     pauseOnHover: true,
-    arrows: false,
+    arrows: true,
     responsive,
   };
 
