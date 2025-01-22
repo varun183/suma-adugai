@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import MenuCard from "../../components/MenuCard/MenuCard";
 
 const categories = ["pizza", "biryani", "burger", "chicken", "rice"];
 
@@ -16,6 +17,8 @@ const foodTypes = [
   { label: "Non-Vegetarion only", value: "non_vegetrian" },
   { label: "Seasonal", value: "seasonal" },
 ];
+
+const menu = [1, 1, 1, 1, 1, 1];
 
 const Menu = () => {
   const [foodType, setFoodType] = useState("all");
@@ -87,7 +90,11 @@ const Menu = () => {
             </div>
           </div>
 
-          <div className="lg:w-[80%] space-y-5 lg:pl-10"></div>
+          <div className="lg:w-[80%] space-y-5 lg:pl-10">
+            {menu.map((item) => (
+              <MenuCard />
+            ))}
+          </div>
         </section>
       </div>
     </>
