@@ -8,6 +8,8 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import darkTheme from "./Theme/DarkTheme";
 import Home from "./customers/pages/Home/Home";
 import Menu from "./customers/pages/Menu/Menu";
+import Cart from "./customers/pages/Cart/Cart";
+import Profile from "./customers/pages/Profile/Profile";
 
 function App() {
   return (
@@ -16,7 +18,9 @@ function App() {
         <CssBaseline />
         <Navbar />
         {/*<Home />*/}
-        <Menu />
+        {/*<Menu />*/}
+        {/*<Cart />*/}
+        <Profile />
       </ThemeProvider>
     </>
   );
