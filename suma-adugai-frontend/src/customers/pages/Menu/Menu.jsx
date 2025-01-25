@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import MenuCard from "../../components/MenuCard/MenuCard";
+import FoodCard from "../../components/FoodCard/FoodCard";
 
 const categories = ["pizza", "biryani", "burger", "chicken", "rice"];
 
@@ -92,7 +92,7 @@ const Menu = () => {
 
           <div className="lg:w-[80%] space-y-5 lg:pl-10">
             {menu.map((item) => (
-              <MenuCard />
+              <FoodCard />
             ))}
           </div>
         </section>
