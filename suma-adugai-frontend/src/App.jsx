@@ -1,26 +1,30 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./index.css";
 import "./App.css";
-import { Navbar } from "./customers/components/Navbar/Navbar";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import darkTheme from "./Theme/DarkTheme";
-import Home from "./customers/pages/Home/Home";
-import Menu from "./customers/pages/Menu/Menu";
-import Cart from "./customers/pages/Cart/Cart";
-import Profile from "./customers/pages/Profile/Profile";
+import CustomerRoutes from "./Routers/CustomerRoutes";
+import SearchPage from "./customers/pages/SearchPage/SearchPage";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getUser } from "./State/Auth/authThunks";
+import store from "./State/Store/store";
 
 function App() {
+  const dispatch = useDispatch();
+  const { auth } = useSelector((store) => store);
+  const jwt = localStorage.getItem("jwt");
+
+  useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt));
+    }
+  }, [auth.jwt]);
   return (
     <>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <Navbar />
-        {/*<Home />*/}
-        {/*<Menu />*/}
-        {/*<Cart />*/}
-        <Profile />
+
+        <CustomerRoutes />
       </ThemeProvider>
     </>
   );
