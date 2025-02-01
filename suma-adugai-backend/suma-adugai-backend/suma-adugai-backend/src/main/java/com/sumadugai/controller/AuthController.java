@@ -93,6 +93,7 @@ public class AuthController {
         authResponse.setMessage("Register Success");
         authResponse.setRole(savedUser.getRole());
 
+        System.out.println("✅ Sending response: " + authResponse);
         return new ResponseEntity<>(authResponse, HttpStatus.OK);
 
     }
