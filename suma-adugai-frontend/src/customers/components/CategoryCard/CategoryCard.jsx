@@ -1,19 +1,30 @@
-import { Card } from "@mui/material";
 import React from "react";
+import { Card, CardContent, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const CategoryCard = () => {
+const CategoryCard = ({ category }) => {
+  const navigate = useNavigate();
+
+  const navigateToMenu = () => {
+    navigate(`/menu?category=${category.id}`);
+  };
+
   return (
-    <div>
-      <Card className="m-5 w-[18rem] productCard ">
-        <div className="cursor-pointer relative">
-          <img
-            className="w-full h-[10rem] rounded-t-md object-cover "
-            src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/1b59f8e96eb6acea83a5b855e2223eb5"
-            alt=""
-          />
-        </div>
-      </Card>
-    </div>
+    <Card
+      className="cursor-pointer hover:shadow-lg transition"
+      onClick={navigateToMenu}
+    >
+      <img
+        src={category.image}
+        alt={category.name}
+        className="w-full h-32 object-cover rounded-t-lg"
+      />
+      <CardContent className="text-center">
+        <Typography variant="h6" fontWeight={500}>
+          {category.name}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 };
 
