@@ -1,6 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const CarouselItem = ({ image, title }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   return (
     <div className="px-2">
       <div className="flex flex-col justify-center items-center">

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getUser } from "./State/Auth/authThunks";
 import store from "./State/Store/store";
+import Menu from "./customers/pages/Menu/Menu";
 
 function App() {
   const dispatch = useDispatch();

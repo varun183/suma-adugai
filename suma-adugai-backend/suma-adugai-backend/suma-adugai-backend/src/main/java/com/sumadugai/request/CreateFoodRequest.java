@@ -21,11 +21,12 @@ public class CreateFoodRequest {
 
 
     private Category category;
-    private List<String> images;
+    private List<String> image;
 
 
 
     private boolean vegetarian;
+    private boolean nonveg;
     private boolean seasonal;
 
 

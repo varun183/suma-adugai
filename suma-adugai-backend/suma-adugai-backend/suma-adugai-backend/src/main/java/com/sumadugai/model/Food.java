@@ -42,6 +42,7 @@ public class Food {
 	private boolean available;
 	
 	private boolean isVegetarian;
+	private boolean isNonVeg;
 	private boolean isSeasonal;
 	
 	@ManyToMany

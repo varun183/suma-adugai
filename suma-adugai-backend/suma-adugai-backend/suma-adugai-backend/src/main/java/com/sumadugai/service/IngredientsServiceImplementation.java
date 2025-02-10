@@ -7,6 +7,7 @@ import com.sumadugai.repository.IngredientsItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,10 @@ public class IngredientsServiceImplementation implements IngredientsService {
 
 
 
+    @Override
+    public List<IngredientsItem> getAllIngredients() {
+        return ingredientsItemRepository.findAll();
+    }
 
     @Override
     public IngredientsCategory createIngredientsCategory(

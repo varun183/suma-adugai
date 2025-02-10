@@ -17,10 +17,10 @@ public class CategoryServiceImplementation implements CategoryService {
     private CategoryRepository categoryRepository;
 
     @Override
-    public Category createCategory(String name,Long userId) throws Exception {
+    public Category createCategory(Long userId,String name,String image) throws Exception {
         Category createdCategory=new Category();
-
         createdCategory.setName(name);
+        createdCategory.setImage(image);
         return categoryRepository.save(createdCategory);
     }
 
@@ -34,7 +34,11 @@ public class CategoryServiceImplementation implements CategoryService {
             throw new Exception("category not exist with id "+id);
         }
 
-        return opt.get();
+         return opt.get();
+    }
+
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
 }

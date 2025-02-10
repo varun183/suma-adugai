@@ -39,6 +39,7 @@ public class OrderServiceImplementation implements OrderService {
     public Order createOrder(CreateOrderRequest order,User user) throws Exception {
 
         Address shippAddress = order.getDeliveryAddress();
+        System.out.println(shippAddress);
 
 
         Address savedAddress = addressRepository.save(shippAddress);
@@ -85,9 +86,7 @@ public class OrderServiceImplementation implements OrderService {
 
 
 
-
-
-        return createdOrder;
+        return savedOrder;
 
     }
 

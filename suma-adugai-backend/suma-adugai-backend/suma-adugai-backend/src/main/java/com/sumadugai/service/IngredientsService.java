@@ -7,14 +7,12 @@ import java.util.List;
 
 public interface IngredientsService {
 
+     List<IngredientsItem> getAllIngredients();
+
      IngredientsCategory createIngredientsCategory(
             String name) throws Exception;
 
      IngredientsCategory findIngredientsCategoryById(Long id) throws Exception;
-
-
-
-
 
      IngredientsItem createIngredientsItem(String ingredientName,Long ingredientCategoryId) throws Exception;
 

@@ -5,6 +5,8 @@ import Profile from "../customers/pages/Profile/Profile";
 import { Route, Routes } from "react-router-dom";
 import Auth from "../customers/pages/Auth/Auth";
 import Navbar from "../customers/components/Navbar/Navbar";
+import Menu from "../customers/pages/Menu/Menu";
+import SearchPage from "../customers/pages/SearchPage/SearchPage";
 
 const CustomerRoutes = () => {
   return (
@@ -15,8 +17,10 @@ const CustomerRoutes = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/account/:register" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/my-profile/*" element={<Profile />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
       <Auth />
     </div>

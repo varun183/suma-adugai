@@ -32,20 +32,20 @@ const responsive = [
   },
 ];
 
-const MultiItemCarousel = () => {
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    pauseOnHover: true,
-    arrows: true,
-    responsive,
-  };
+const settings = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 5,
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 2000,
+  pauseOnHover: true,
+  arrows: true,
+  responsive,
+};
 
+const MultiItemCarousel = () => {
   return (
     <div>
       <Slider {...settings}>

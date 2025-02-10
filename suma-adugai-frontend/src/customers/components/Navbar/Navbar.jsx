@@ -11,8 +11,12 @@ import { useDispatch, useSelector } from "react-redux";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { auth } = useSelector((store) => store);
+  const { auth, cart } = useSelector((store) => store);
   const dispatch = useDispatch();
+
+  const navigateToCart = () => {
+    navigate("/cart");
+  };
 
   const navigateToHome = () => {
     navigate("/");
@@ -39,7 +43,7 @@ const Navbar = () => {
       </div>
       <div className="flex items-center space-x-2 lg:space-x-10">
         <div>
-          <IconButton>
+          <IconButton onClick={() => navigate("/search")}>
             <SearchIcon sx={{ fontSize: "1.5rem" }} />
           </IconButton>
         </div>
@@ -72,8 +76,8 @@ const Navbar = () => {
           )}
         </div>
 
-        <IconButton>
-          <Badge color="secondary" badgeContent={3}>
+        <IconButton onClick={navigateToCart}>
+          <Badge color="black" badgeContent={cart.cartItems.length}>
             <ShoppingCartIcon className="text-4xl" sx={{ fontSize: "2rem" }} />
           </Badge>
         </IconButton>

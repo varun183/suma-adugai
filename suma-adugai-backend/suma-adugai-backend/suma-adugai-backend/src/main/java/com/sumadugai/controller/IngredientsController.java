@@ -19,6 +19,12 @@ public class IngredientsController {
     @Autowired
     private IngredientsService ingredientService;
 
+    @GetMapping()
+    public ResponseEntity<List<IngredientsItem>> getAllIngredients() {
+        List<IngredientsItem> ingredients = ingredientService.getAllIngredients();
+        return new ResponseEntity<>(ingredients, HttpStatus.OK);
+    }
+
     @PostMapping("/category")
     public ResponseEntity<IngredientsCategory> createIngredientCategory(
             @RequestBody CreateIngredientCategoryRequest req) throws Exception{
@@ -30,7 +36,7 @@ public class IngredientsController {
     public ResponseEntity<IngredientsItem> createIngredient(
             @RequestBody CreateIngredientRequest req) throws Exception{
 
-        IngredientsItem item=ingredientService.createIngredientsItem(req.getName(),req.getIngredientCategoryId());
+        IngredientsItem item=ingredientService.createIngredientsItem(req.getName(),req.getCategoryId());
         return new ResponseEntity<>(item,HttpStatus.OK);
     }
 

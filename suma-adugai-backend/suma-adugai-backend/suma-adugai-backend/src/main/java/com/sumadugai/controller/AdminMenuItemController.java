@@ -62,6 +62,21 @@ public class AdminMenuItemController {
         return ResponseEntity.ok(menuItems);
     }
 
+    @PutMapping("/{id}/update-nonveg")
+    public ResponseEntity<Food> updateNonVegStatus(@PathVariable Long id) throws Exception {
+        Food updatedFood = menuItemService.updateNonVegStatus(id);
+        return ResponseEntity.ok(updatedFood);
+    }
+
+    @PutMapping("/{id}/update-image")
+    public ResponseEntity<Food> updateFoodImage(
+            @PathVariable Long id,
+            @RequestBody List<String> newImages) throws Exception {
+        Food updatedFood = menuItemService.updateFoodImage(id, newImages);
+        return ResponseEntity.ok(updatedFood);
+    }
+
+
 
 
 }

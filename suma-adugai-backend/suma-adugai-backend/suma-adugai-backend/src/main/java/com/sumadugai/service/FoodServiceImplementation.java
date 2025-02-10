@@ -4,34 +4,34 @@ import com.sumadugai.model.Category;
 import com.sumadugai.model.Food;
 import com.sumadugai.repository.FoodRepository;
 import com.sumadugai.request.CreateFoodRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class FoodServiceImplementation implements FoodService {
 
+    @Autowired
     private FoodRepository foodRepository;
 
     @Override
     public Food createFood(CreateFoodRequest  req,
                            Category category
-                           )
-            throws Exception {
+    )
+    {
 
         Food food=new Food();
         food.setFoodCategory(category);
         food.setCreationDate(new Date());
         food.setDescription(req.getDescription());
-        food.setImages(req.getImages());
+        food.setImages(req.getImage());
         food.setName(req.getName());
-        food.setPrice((long) req.getPrice());
+        food.setPrice(req.getPrice());
         food.setSeasonal(req.isSeasonal());
         food.setVegetarian(req.isVegetarian());
+        food.setNonVeg(req.isNonveg());
         food.setIngredients(req.getIngredients());
         food = foodRepository.save(food);
 
@@ -48,6 +48,39 @@ public class FoodServiceImplementation implements FoodService {
 
     }
 
+    @Override
+    public List<Food> getFoodByCategoryNameAndFilters(String categoryName, Boolean isVegetarian,
+                                                      Boolean isNonveg,
+                                                      Boolean isSeasonal)  {
+
+        List<Food> foods;
+
+        if (categoryName != null && !categoryName.isEmpty() && !categoryName.equalsIgnoreCase("all")) {
+            foods = foodRepository.findFoodsByFoodCategory_Name(categoryName);
+        } else {
+            foods = foodRepository.findAll();
+        }
+
+// Apply filters only if at least one is true
+        if (Boolean.TRUE.equals(isVegetarian) || Boolean.TRUE.equals(isNonveg) || Boolean.TRUE.equals(isSeasonal)) {
+            if (Boolean.TRUE.equals(isVegetarian)) {
+                foods = filterByVegetarian(foods, true);
+            }
+            if (Boolean.TRUE.equals(isNonveg)) {
+                foods = filterByNonveg(foods, true);
+            }
+            if (Boolean.TRUE.equals(isSeasonal)) {
+                foods = filterBySeasonal(foods, true);
+            }
+        }
+
+        return foods; // Remove redundant category fetching
+    }
+
+
+
+
+
     private List<Food> filterByVegetarian(List<Food> foods, boolean isVegetarian) {
         return foods.stream()
                 .filter(food -> food.isVegetarian() == isVegetarian)
@@ -56,7 +89,7 @@ public class FoodServiceImplementation implements FoodService {
 
     private List<Food> filterByNonveg(List<Food> foods, boolean isNonveg) {
         return foods.stream()
-                .filter(food -> !food.isVegetarian())
+                .filter(food -> food.isNonVeg()==isNonveg)
                 .collect(Collectors.toList());
     }
 
@@ -66,18 +99,16 @@ public class FoodServiceImplementation implements FoodService {
                 .collect(Collectors.toList());
     }
 
-    private List<Food> filterByFoodCategory(List<Food> foods, String foodCategory) {
+    @Override
+    public List<Food> getAllFoodsByCategory(String categoryName) {
+        // Add null check for categoryName
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Category name cannot be null or empty");
+        }
 
-        return foods.stream()
-                .filter(food -> {
-                    if (food.getFoodCategory() != null) {
-                        return food.getFoodCategory().getName().equals(foodCategory);
-                    }
-                    return false; // Return true if food category is null
-                })
-                .collect(Collectors.toList());
+        // Use repository method with database-level filtering
+        return foodRepository.findFoodsByFoodCategory_Name(categoryName);
     }
-
 
 
 
@@ -85,7 +116,7 @@ public class FoodServiceImplementation implements FoodService {
     public List<Food> searchFood(String keyword) {
         List<Food> items=new ArrayList<>();
 
-        if(keyword!="") {
+        if(!Objects.equals(keyword, "")) {
             System.out.println("keyword -- "+keyword);
             items=foodRepository.searchByNameOrCategory(keyword);
         }
@@ -110,4 +141,35 @@ public class FoodServiceImplementation implements FoodService {
         }
         throw new Exception("food with id" + foodId + "not found");
     }
+
+    @Override
+    public Food updateNonVegStatus(Long id) throws Exception {
+        Food food = findFoodById(id);
+        if (food == null) {
+            throw new Exception("Food item with ID " + id + " not found");
+        }
+        food.setNonVeg(true);
+        return foodRepository.save(food);
+    }
+
+    @Override
+    public Food updateFoodImage(Long id, List<String> newImages) throws Exception {
+        Food food = findFoodById(id); // Find the food item
+        food.setImages(newImages); // Update the images list
+        return foodRepository.save(food); // Save and return updated food
+    }
+
+
+
+
+
+    @Override
+    public List<Food> getAllFoods(){
+        return foodRepository.findAll();
+    }
+
+
+
+
+
 }
