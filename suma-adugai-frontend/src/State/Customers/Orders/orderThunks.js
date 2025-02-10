@@ -14,9 +14,9 @@ export const createOrder = createAsyncThunk(
       });
 
       // If there is a payment URL, redirect the user
-      // if (data.payment_url) {
-      //   window.location.href = data.payment_url;
-      // }
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      }
 
       console.log("Created order data:", data);
       return data;
