@@ -1,115 +1,118 @@
-import { ExpandMore } from "@mui/icons-material";
+import React from "react";
+import { Button, Card, IconButton } from "@mui/material";
+import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-} from "@mui/material";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { categorizedIngredients } from "../../util/categorizedIngredients";
-import { addItemToCart } from "../../../State/Customers/Cart/cartThunks";
+  addItemToCart,
+  removeCartItem,
+  updateCartItem,
+} from "../../../State/Customers/Cart/cartThunks";
 
 const FoodCard = ({ item }) => {
   const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state); // entire cart state from Redux
 
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  // 1. Find if this item is already in the cart
+  const cartItem = cart?.cartItems?.find((ci) => ci.food.id === item.id);
+  const quantity = cartItem ? cartItem.quantity : 0; // 0 if not in the cart
 
-  const handleCheckboxChange = (itemName) => {
-    if (selectedIngredients.includes(itemName)) {
-      console.log("yes");
-      setSelectedIngredients(
-        selectedIngredients.filter((item) => item !== itemName)
-      );
-    } else {
-      console.log("no");
-      setSelectedIngredients([...selectedIngredients, itemName]);
-    }
-  };
-
-  const handleAddItemToCart = (e) => {
-    e.preventDefault();
+  // 2. Add to cart if not present
+  const handleAdd = () => {
     const data = {
       token: localStorage.getItem("jwt"),
       cartItem: {
         menuItemId: item.id,
         quantity: 1,
-        ingredients: selectedIngredients,
       },
     };
     dispatch(addItemToCart(data));
   };
 
+  // 3. Increment the quantity
+  const handleIncrement = () => {
+    if (quantity === 0) {
+      handleAdd();
+    } else {
+      const data = {
+        data: {
+          cartItemId: cartItem.id,
+          quantity: quantity + 1,
+        },
+        jwt: localStorage.getItem("jwt"),
+      };
+      dispatch(updateCartItem(data));
+    }
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      dispatch(
+        updateCartItem({
+          data: { cartItemId: cartItem.id, quantity: quantity - 1 },
+          jwt: localStorage.getItem("jwt"),
+        })
+      );
+    } else if (quantity === 1 && cartItem) {
+      // Check if the item still exists in Redux state before removing
+      if (cart.cartItems.some((item) => item.id === cartItem.id)) {
+        dispatch(
+          removeCartItem({
+            cartItemId: cartItem.id,
+            jwt: localStorage.getItem("jwt"),
+          })
+        );
+      }
+    }
+  };
+
   return (
-    <>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <div className="lg:flex items-center justify-between">
-            <div className="lg:flex items-center lg:space-x-5">
-              <img
-                className="w-[7rem] h-[7rem] object-cover"
-                src={item.images[0]}
-              />
-              <div className="space-y-1 lg:space-y-5 lg:max-w-2xl">
-                <p className="font-semibold text-xl">{item.name}</p>
-                <p>₹{item.price}</p>
-                <p className="text-gray-400">{item.description}</p>
-              </div>
-            </div>
+    <Card
+      variant="outlined"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        mb: 2,
+        p: 2,
+      }}
+    >
+      {/* Left Section: Image + Info */}
+      <div style={{ display: "flex", gap: "1rem" }}>
+        <img
+          src={item.images[0]}
+          alt={item.name}
+          style={{ width: "7rem", height: "7rem", objectFit: "cover" }}
+        />
+        <div>
+          <p className="font-semibold text-xl">{item.name}</p>
+          <p>₹{item.price}</p>
+          <p className="text-gray-400">{item.description}</p>
+        </div>
+      </div>
+
+      {/* Right Section: Add or Increment/Decrement */}
+      <div>
+        {!item.available ? (
+          <Button variant="contained" disabled>
+            Out of stock
+          </Button>
+        ) : quantity === 0 ? (
+          <Button variant="contained" onClick={handleAdd}>
+            Add
+          </Button>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <IconButton onClick={handleDecrement} color="primary">
+              <RemoveCircleOutline />
+            </IconButton>
+            <span>{quantity}</span>
+            <IconButton onClick={handleIncrement} color="primary">
+              <AddCircleOutline />
+            </IconButton>
           </div>
-        </AccordionSummary>
-        <AccordionDetails>
-          <form onSubmit={handleAddItemToCart}>
-            <div className="flex gap-5 flex-wrap">
-              {Object.keys(categorizedIngredients(item?.ingredients))?.map(
-                (category) => (
-                  <div className="pr-5">
-                    <p>{category}</p>
-                    <FormGroup>
-                      {categorizedIngredients(item?.ingredients)[category].map(
-                        (ingredient, index) => (
-                          <FormControlLabel
-                            key={ingredient.name}
-                            control={
-                              <Checkbox
-                                checked={selectedIngredients.includes(
-                                  ingredient.name
-                                )}
-                                onChange={() =>
-                                  handleCheckboxChange(ingredient.name)
-                                }
-                                disabled={!ingredient.inStock}
-                              />
-                            }
-                            label={ingredient.name}
-                          />
-                        )
-                      )}
-                    </FormGroup>
-                  </div>
-                )
-              )}
-            </div>
-            <div className="pt-5">
-              <Button
-                variant="contained"
-                disabled={!item.available}
-                type="submit"
-              >
-                {item.available ? "Add To Cart" : "Out of stock"}
-              </Button>
-            </div>
-          </form>
-        </AccordionDetails>
-      </Accordion>
-    </>
+        )}
+      </div>
+    </Card>
   );
 };
 

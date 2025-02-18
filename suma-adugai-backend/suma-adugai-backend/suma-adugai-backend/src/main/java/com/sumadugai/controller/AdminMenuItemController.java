@@ -27,7 +27,9 @@ public class AdminMenuItemController {
             @RequestHeader("Authorization") String jwt)
             throws Exception {
         System.out.println("req-controller ----"+item);
-        User user = userService.findUserProfileByJwt(jwt);
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
 //		Category category=categoryService.findCategoryById(item.getCategoryId());
         Food menuItem = menuItemService.createFood(item,item.getCategory());
         return ResponseEntity.ok(menuItem);
@@ -38,7 +40,9 @@ public class AdminMenuItemController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteItem(@PathVariable Long id, @RequestHeader("Authorization") String jwt)
             throws Exception {
-        User user = userService.findUserProfileByJwt(jwt);
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
 
         menuItemService.deleteFood(id);
         return ResponseEntity.ok("Menu item deleted");
@@ -74,6 +78,20 @@ public class AdminMenuItemController {
             @RequestBody List<String> newImages) throws Exception {
         Food updatedFood = menuItemService.updateFoodImage(id, newImages);
         return ResponseEntity.ok(updatedFood);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Food>> getAllMenuItems(@RequestHeader(value = "Authorization", required = false) String jwt) throws Exception {
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
+
+        List<Food> menuItems = menuItemService.getAllFoods();
+
+        return ResponseEntity.ok(menuItems);
+
+
+
     }
 
 

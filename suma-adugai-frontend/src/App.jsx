@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { getUser } from "./State/Auth/authThunks";
 import store from "./State/Store/store";
 import Menu from "./customers/pages/Menu/Menu";
+import Routers from "./Routers/Routes";
 
 function App() {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ function App() {
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
 
-        <CustomerRoutes />
+        <Routers />
       </ThemeProvider>
     </>
   );

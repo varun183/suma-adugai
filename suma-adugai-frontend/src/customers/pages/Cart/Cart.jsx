@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import CartItemCard from "../../components/CartItemCard/CartItemCard";
 import {
   Box,
   Button,
   Card,
   Divider,
-  Grid2,
+  Grid as Grid2,
   Modal,
   Snackbar,
   TextField,
@@ -16,11 +16,9 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { cartTotal } from "../../util/totalPay";
-import { useState } from "react";
-import { useEffect } from "react";
 import { findCart } from "../../../State/Customers/Cart/cartThunks";
-import { isValid } from "../../util/validToOrder";
 import { createOrder } from "../../../State/Customers/Orders/orderThunks";
+import { isValid } from "../../util/validToOrder";
 
 const style = {
   position: "absolute",
@@ -33,6 +31,7 @@ const style = {
   outline: "none",
   p: 4,
 };
+
 const initialValues = {
   streetAddress: "",
   state: "",
@@ -51,25 +50,20 @@ const validationSchema = Yup.object().shape({
 
 const Cart = () => {
   const dispatch = useDispatch();
-
-  const [openSnackbar, setOpenSnackbar] = useState();
   const [openAddressModal, setOpenAddressModal] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const { cart, auth } = useSelector((store) => store);
 
   useEffect(() => {
     dispatch(findCart(localStorage.getItem("jwt")));
-  }, []);
+  }, [dispatch]);
 
-  const handleCloseAddressModal = () => {
-    setOpenAddressModal(false);
-  };
-
+  const handleCloseAddressModal = () => setOpenAddressModal(false);
+  const handleOpenAddressModal = () => setOpenAddressModal(true);
   const handleCloseSnackBar = () => setOpenSnackbar(false);
 
-  const handleOpenAddressModal = () => setOpenAddressModal(true);
-
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = (values) => {
     const data = {
       jwt: localStorage.getItem("jwt"),
       order: {
@@ -83,10 +77,11 @@ const Cart = () => {
         },
       },
     };
-    console.log("data", data);
     if (isValid(cart.cartItems)) {
       dispatch(createOrder(data));
-    } else setOpenSnackbar(true);
+    } else {
+      setOpenSnackbar(true);
+    }
   };
 
   const createOrderUsingSelectedAddress = (deliveryAddress) => {
@@ -94,17 +89,16 @@ const Cart = () => {
       jwt: localStorage.getItem("jwt"),
       order: {
         deliveryAddress: {
-          fullName: auth.user?.fullName, // ✅ Use the logged-in user's name
-          streetAddress: deliveryAddress.streetAddress, // ✅ Use the selected address details
+          id: deliveryAddress.id,
+          fullName: auth.user?.fullName,
+          streetAddress: deliveryAddress.streetAddress,
           city: deliveryAddress.city,
           state: deliveryAddress.state,
           postalCode: deliveryAddress.postalCode,
-          country: deliveryAddress.country, // ✅ Ensure this is fetched correctly
+          country: deliveryAddress.country,
         },
       },
     };
-
-    console.log("data", data);
     if (isValid(cart.cartItems)) {
       dispatch(createOrder(data));
     } else {
@@ -116,10 +110,12 @@ const Cart = () => {
     <>
       {cart.cartItems.length > 0 ? (
         <main className="lg:flex justify-between">
+          {/* Left side: Cart items + Bill details */}
           <section className="lg:w-[30%] space-y-6 lg:min-h-screen pt-10">
-            {cart.cartItems.map((item, i) => (
-              <CartItemCard item={item} />
+            {cart.cartItems.map((item) => (
+              <CartItemCard key={item.id} item={item} />
             ))}
+
             <Divider />
             <div className="billDetails px-5 text-sm">
               <p className="font-extralight py-5">Bill Details</p>
@@ -129,11 +125,11 @@ const Cart = () => {
                   <p>₹{cartTotal(cart.cartItems)}</p>
                 </div>
                 <div className="flex justify-between text-gray-400">
-                  <p>Deliver Fee</p>
+                  <p>Delivery Fee</p>
                   <p>₹21</p>
                 </div>
                 <div className="flex justify-between text-gray-400">
-                  <p>Plateform Fee</p>
+                  <p>Platform Fee</p>
                   <p>₹5</p>
                 </div>
                 <div className="flex justify-between text-gray-400">
@@ -148,23 +144,26 @@ const Cart = () => {
               </div>
             </div>
           </section>
+
           <Divider orientation="vertical" flexItem />
 
+          {/* Right side: Address selection */}
           <section className="lg:w-[70%] flex justify-center px-5 pb-10 lg:pb-0">
-            <div className="">
+            <div>
               <h1 className="text-center font-semibold text-2xl py-10">
                 Choose Delivery Address
               </h1>
               <div className="flex gap-5 flex-wrap justify-center">
-                {auth.user?.addresses.map((item, index) => (
+                {auth.user?.addresses.map((addr) => (
                   <AddressCard
-                    handleSelectAddress={createOrderUsingSelectedAddress}
-                    item={item}
+                    key={addr.id}
+                    item={addr}
                     showButton={true}
+                    handleSelectAddress={createOrderUsingSelectedAddress}
                   />
                 ))}
-
-                <Card className="flex flex-col justify-center items-center p-5  w-64 ">
+                {/* Add new address UI */}
+                <Card className="flex flex-col justify-center items-center p-5 w-64">
                   <div className="flex space-x-5">
                     <AddLocationAlt />
                     <div className="space-y-5">
@@ -185,6 +184,7 @@ const Cart = () => {
           </section>
         </main>
       ) : (
+        // If cart is empty
         <div className="flex h-[90vh] justify-center items-center">
           <div className="text-center space-y-5">
             <RemoveShoppingCart sx={{ width: "10rem", height: "10rem" }} />
@@ -193,6 +193,7 @@ const Cart = () => {
         </div>
       )}
 
+      {/* Modal to add new address */}
       <Modal open={openAddressModal} onClose={handleCloseAddressModal}>
         <Box sx={style}>
           <Formik
@@ -204,12 +205,11 @@ const Cart = () => {
               <Grid2 container spacing={2}>
                 <Grid2 item xs={12}>
                   <Field
-                    name="streetAddress"
                     as={TextField}
+                    name="streetAddress"
                     label="Street Address"
                     fullWidth
                     variant="outlined"
-                    error={!ErrorMessage("streetAddress")}
                     helperText={
                       <ErrorMessage name="streetAddress">
                         {(msg) => <span className="text-red-600">{msg}</span>}
@@ -219,12 +219,11 @@ const Cart = () => {
                 </Grid2>
                 <Grid2 item xs={6}>
                   <Field
-                    name="state"
                     as={TextField}
+                    name="state"
                     label="State"
                     fullWidth
                     variant="outlined"
-                    error={!ErrorMessage("state")}
                     helperText={
                       <ErrorMessage name="state">
                         {(msg) => <span className="text-red-600">{msg}</span>}
@@ -234,12 +233,11 @@ const Cart = () => {
                 </Grid2>
                 <Grid2 item xs={6}>
                   <Field
-                    name="postalCode"
                     as={TextField}
-                    label="postalCode"
+                    name="postalCode"
+                    label="Postal Code"
                     fullWidth
                     variant="outlined"
-                    error={!ErrorMessage("postalCode")}
                     helperText={
                       <ErrorMessage name="postalCode">
                         {(msg) => <span className="text-red-600">{msg}</span>}
@@ -249,12 +247,11 @@ const Cart = () => {
                 </Grid2>
                 <Grid2 item xs={12}>
                   <Field
-                    name="city"
                     as={TextField}
+                    name="city"
                     label="City"
                     fullWidth
                     variant="outlined"
-                    error={!ErrorMessage("city")}
                     helperText={
                       <ErrorMessage name="city">
                         {(msg) => <span className="text-red-600">{msg}</span>}
@@ -272,12 +269,12 @@ const Cart = () => {
           </Formik>
         </Box>
       </Modal>
+
       <Snackbar
-        severity="success"
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackBar}
-        message="Please Add Items Only From One Restaurants At time"
+        message="Please Add Items Only From One Restaurant At A Time"
       />
     </>
   );

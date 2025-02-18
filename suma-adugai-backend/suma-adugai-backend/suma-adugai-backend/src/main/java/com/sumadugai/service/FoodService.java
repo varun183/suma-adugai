@@ -15,8 +15,7 @@ public interface FoodService {
      List<Food> searchFood(String keyword);
 
     public List<Food> getFoodByCategoryNameAndFilters(String categoryName, Boolean isVegetarian,
-                                                      Boolean isNonveg,
-                                                      Boolean isSeasonal);
+                                                      Boolean isNonveg);
 
     public List<Food> getAllFoodsByCategory(String categoryName);
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sumadugai.Exception.OrderException;
 import com.sumadugai.model.Order;
+import com.sumadugai.model.User;
 import com.sumadugai.service.OrderService;
 import com.sumadugai.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,18 @@ public class AdminOrderController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/order")
+    public ResponseEntity<List<Order>> getAllOrders(@RequestHeader(value = "Authorization", required = false) String jwt,@RequestParam(required = false) String order_status) throws Exception {
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
+
+        List<Order> orders = orderService.getAllOrders(order_status);
+
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+
+    }
+
 
     @DeleteMapping("/order/{orderId}")
     public ResponseEntity<String> deleteOrder(@PathVariable Long orderId) throws OrderException {
@@ -43,7 +56,11 @@ public class AdminOrderController {
 
 
     @PutMapping("/orders/{orderId}/{orderStatus}")
-    public ResponseEntity<Order> updateOrders(@PathVariable Long orderId,@PathVariable String orderStatus) throws OrderException{
+    public ResponseEntity<Order> updateOrders(@RequestHeader(value = "Authorization", required = false) String jwt,@PathVariable Long orderId,@PathVariable String orderStatus) throws Exception {
+
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
 
         Order orders = orderService.updateOrder(orderId, orderStatus);
         return ResponseEntity.ok(orders);

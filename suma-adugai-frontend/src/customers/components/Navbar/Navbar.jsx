@@ -1,18 +1,31 @@
-import { Avatar, IconButton, Badge } from "@mui/material";
-import React from "react";
+import { Avatar, IconButton, Badge, MenuItem, Menu } from "@mui/material";
+import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { pink } from "@mui/material/colors";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import "./Navbar.css";
-import { Person } from "@mui/icons-material";
+import { Person, ShoppingCart } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import Auth from "../../pages/Auth/Auth";
+import { logout } from "../../../State/Auth/authSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth, cart } = useSelector((store) => store);
   const dispatch = useDispatch();
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const open = Boolean(anchorEl);
+  const handleOpenMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   const navigateToCart = () => {
     navigate("/cart");
@@ -23,10 +36,18 @@ const Navbar = () => {
   };
 
   const navigateToProfile = (e) => {
-    auth.user?.role === "ROLE_ADMIN" ||
-    auth.user?.role === "ROLE_RESTAURANT_OWNER"
-      ? navigate("/admin/restaurant")
+    auth.user?.role === "ROLE_ADMIN"
+      ? navigate("/admin")
       : navigate("/my-profile");
+  };
+
+  const handleCloseAuthModel = () => {
+    navigate("/");
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    handleCloseMenu();
   };
 
   return (
@@ -74,14 +95,36 @@ const Navbar = () => {
               <Person sx={{ fontSize: "2rem" }} />
             </IconButton>
           )}
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleCloseMenu}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
+          >
+            <MenuItem
+              onClick={() =>
+                auth.user?.role === "ROLE_ADMIN"
+                  ? navigate("/admin")
+                  : navigate("/super-admin")
+              }
+            >
+              Profile
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
         </div>
 
         <IconButton onClick={navigateToCart}>
           <Badge color="black" badgeContent={cart.cartItems.length}>
-            <ShoppingCartIcon className="text-4xl" sx={{ fontSize: "2rem" }} />
+            <ShoppingCart className="text-4xl" sx={{ fontSize: "2rem" }} />
           </Badge>
         </IconButton>
       </div>
+
+      <Auth handleClose={handleCloseAuthModel} />
     </div>
   );
 };

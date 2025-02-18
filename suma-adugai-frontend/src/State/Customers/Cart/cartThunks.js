@@ -77,16 +77,22 @@ export const updateCartItem = createAsyncThunk(
 );
 
 // 🔹 Remove Cart Item
+// 🔹 Remove Cart Item
 export const removeCartItem = createAsyncThunk(
   "cart/removeCartItem",
-  async ({ cartItemId, jwt }, { rejectWithValue }) => {
+  async ({ cartItemId, jwt }, { rejectWithValue, dispatch }) => {
     try {
-      await axios.delete(`${API_URL}/api/cart-item/${cartItemId}/remove`, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
-      return cartItemId;
+      const response = await axios.delete(
+        `${API_URL}/api/cart-item/${cartItemId}/remove`,
+        {
+          headers: { Authorization: `Bearer ${jwt}` },
+        }
+      );
+
+      // ✅ Fetch updated cart to prevent UI sync issues
+      dispatch(findCart(jwt));
+
+      return response.data; // Updated cart from the backend
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -96,7 +102,12 @@ export const removeCartItem = createAsyncThunk(
 // 🔹 Clear Cart
 export const clearCart = createAsyncThunk(
   "cart/clearCart",
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState();
+
+    if (!state.cart.cartItems.length)
+      return rejectWithValue("Cart is already empty.");
+
     try {
       const { data } = await axios.put(
         `${API_URL}/api/cart/clear`,

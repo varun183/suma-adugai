@@ -19,7 +19,7 @@ export const createOrder = createAsyncThunk(
       }
 
       console.log("Created order data:", data);
-      return data;
+      dispatch(createOrderSuccess(data));
     } catch (error) {
       console.error("Error creating order:", error);
       return rejectWithValue(error.message);

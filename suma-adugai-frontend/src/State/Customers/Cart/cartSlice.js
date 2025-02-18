@@ -90,9 +90,8 @@ const cartSlice = createSlice({
       })
       .addCase(removeCartItem.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.cartItems = state.cartItems.filter(
-          (item) => item.id !== action.payload
-        );
+        state.cartItems = action.payload.items || []; // Ensure it updates with backend response
+        state.cart = action.payload; // Sync entire cart state
       })
       .addCase(removeCartItem.rejected, (state, action) => {
         state.isLoading = false;

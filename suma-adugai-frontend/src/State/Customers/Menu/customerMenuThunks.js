@@ -20,7 +20,7 @@ export const searchMenuItems = createAsyncThunk(
 export const fetchFoodByCategory = createAsyncThunk(
   "customerMenu/fetchFoodByCategory",
   async (
-    { categoryName, vegetarian, seasonal, isNonveg, jwt },
+    { categoryName, vegetarian, isNonveg, jwt },
     { rejectWithValue }
   ) => {
     try {
@@ -32,10 +32,9 @@ export const fetchFoodByCategory = createAsyncThunk(
       }
 
       // Only include boolean filters if at least one is true
-      if (vegetarian || isNonveg || seasonal) {
+      if (vegetarian || isNonveg ) {
         params.append("isVegetarian", vegetarian);
         params.append("isNonveg", isNonveg);
-        params.append("isSeasonal", seasonal);
       }
 
       console.log("JWT Token Being Sent:", jwt);
@@ -47,6 +46,8 @@ export const fetchFoodByCategory = createAsyncThunk(
         }
       );
 
+      console.log("Fetch foods", data);
+
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -54,15 +55,48 @@ export const fetchFoodByCategory = createAsyncThunk(
   }
 );
 
-export const fetchAllFoodsByCategory = createAsyncThunk(
-  "customerMenu/fetchAllFoodsByCategory",
-  async ({ token, categoryName }, { rejectWithValue }) => {
+export const createMenuItem = createAsyncThunk(
+  "customerMenu/createMenuItem",
+  async ({ menu, jwt }, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(
-        `${API_URL}/api/food/category/all?categoryName=${categoryName}`
-      );
-      console.log("All foods by category", data);
+      const { data } = await axios.post(`${API_URL}/api/admin/food`, menu, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
       return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Update Menu Item Availability
+export const updateMenuItemAvailability = createAsyncThunk(
+  "customerMenu/updateMenuItemAvailability",
+  async ({ foodId, jwt }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(
+        `${API_URL}/api/admin/food/${foodId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${jwt}` },
+        }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+// Delete Menu Item
+export const deleteMenuItem = createAsyncThunk(
+  "customerMenu/deleteMenuItem",
+  async ({ foodId, jwt }, { rejectWithValue }) => {
+    try {
+      await axios.delete(`${API_URL}/api/admin/food/${foodId}`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      return foodId;
     } catch (error) {
       return rejectWithValue(error.message);
     }

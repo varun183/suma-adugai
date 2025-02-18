@@ -4,7 +4,6 @@ import customerMenuReducer from "../Customers/Menu/customerMenuSlice";
 import cartReducer from "../Customers/Cart/cartSlice";
 import orderReducer from "../Customers/Orders/orderSlice";
 import adminOrderReducer from "../Admin/Order/adminOrderSlice";
-import ingredientReducer from "../Admin/Ingredients/ingredientSlice";
 import categoryReducer from "../Customers/Category/categorySlice";
 
 const store = configureStore({
@@ -16,7 +15,6 @@ const store = configureStore({
     category: categoryReducer,
 
     adminOrders: adminOrderReducer,
-    ingredients: ingredientReducer,
   },
 });
 

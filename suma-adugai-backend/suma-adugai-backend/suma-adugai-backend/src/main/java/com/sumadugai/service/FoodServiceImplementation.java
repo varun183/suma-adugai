@@ -26,13 +26,12 @@ public class FoodServiceImplementation implements FoodService {
         food.setFoodCategory(category);
         food.setCreationDate(new Date());
         food.setDescription(req.getDescription());
-        food.setImages(req.getImage());
+        food.setImages(req.getImages());
         food.setName(req.getName());
         food.setPrice(req.getPrice());
-        food.setSeasonal(req.isSeasonal());
         food.setVegetarian(req.isVegetarian());
         food.setNonVeg(req.isNonveg());
-        food.setIngredients(req.getIngredients());
+
         food = foodRepository.save(food);
 
         return food;
@@ -50,8 +49,8 @@ public class FoodServiceImplementation implements FoodService {
 
     @Override
     public List<Food> getFoodByCategoryNameAndFilters(String categoryName, Boolean isVegetarian,
-                                                      Boolean isNonveg,
-                                                      Boolean isSeasonal)  {
+                                                      Boolean isNonveg
+                                                     )  {
 
         List<Food> foods;
 
@@ -62,16 +61,14 @@ public class FoodServiceImplementation implements FoodService {
         }
 
 // Apply filters only if at least one is true
-        if (Boolean.TRUE.equals(isVegetarian) || Boolean.TRUE.equals(isNonveg) || Boolean.TRUE.equals(isSeasonal)) {
+        if (Boolean.TRUE.equals(isVegetarian) || Boolean.TRUE.equals(isNonveg) ) {
             if (Boolean.TRUE.equals(isVegetarian)) {
                 foods = filterByVegetarian(foods, true);
             }
             if (Boolean.TRUE.equals(isNonveg)) {
                 foods = filterByNonveg(foods, true);
             }
-            if (Boolean.TRUE.equals(isSeasonal)) {
-                foods = filterBySeasonal(foods, true);
-            }
+
         }
 
         return foods; // Remove redundant category fetching
@@ -93,11 +90,6 @@ public class FoodServiceImplementation implements FoodService {
                 .collect(Collectors.toList());
     }
 
-    private List<Food> filterBySeasonal(List<Food> foods, boolean isSeasonal) {
-        return foods.stream()
-                .filter(food -> food.isSeasonal() == isSeasonal)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public List<Food> getAllFoodsByCategory(String categoryName) {

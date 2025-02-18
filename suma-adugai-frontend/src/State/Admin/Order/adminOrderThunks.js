@@ -4,12 +4,16 @@ import { api } from "../../../config/api";
 // Async Thunks for Admin Orders
 export const fetchOrders = createAsyncThunk(
   "adminOrders/fetchOrders",
-  async (jwt, { rejectWithValue }) => {
+  async ({ orderStatus, jwt }, { rejectWithValue }) => {
     try {
-      const { data } = await api.get("/api/admin/order", {
-        headers: { Authorization: `Bearer ${jwt}` },
+      const response = await api.get("/api/admin/order", {
+        params: { order_status: orderStatus },
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
       });
-      return data;
+      console.log("fetch Orders", response.data);
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -20,14 +24,15 @@ export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
   async ({ orderId, orderStatus, jwt }, { rejectWithValue }) => {
     try {
-      const { data } = await api.put(
+      // Correct URL now includes both orderId and orderStatus as path variables.
+      const response = await api.put(
         `/api/admin/orders/${orderId}/${orderStatus}`,
-        {},
+        {}, // Empty body (if the endpoint doesn't require a request body)
         {
           headers: { Authorization: `Bearer ${jwt}` },
         }
       );
-      return data;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

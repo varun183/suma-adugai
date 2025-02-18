@@ -8,7 +8,9 @@ import com.sumadugai.Exception.UserException;
 import com.sumadugai.model.Order;
 import com.sumadugai.model.User;
 import com.sumadugai.request.CreateOrderRequest;
+import com.sumadugai.response.PaymentResponse;
 import com.sumadugai.service.OrderService;
+import com.sumadugai.service.PaymentService;
 import com.sumadugai.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,17 +32,19 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PaymentService paymentService;
 
     @PostMapping("/order")
-    public ResponseEntity<Order>  createOrder(@RequestBody CreateOrderRequest order,
-                                                 @RequestHeader("Authorization") String jwt)
+    public ResponseEntity<PaymentResponse>  createOrder(@RequestBody CreateOrderRequest order,
+                                                        @RequestHeader("Authorization") String jwt)
             throws Exception,UserException,
             CartException,
             OrderException {
         User user=userService.findUserProfileByJwt(jwt);
         System.out.println("req user "+user.getEmail());
         if(order!=null) {
-            Order res = orderService.createOrder(order,user);
+            PaymentResponse res = orderService.createOrder(order,user);
             return ResponseEntity.ok(res);
 
         }else throw new OrderException("Please provide valid request body");

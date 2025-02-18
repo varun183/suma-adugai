@@ -26,7 +26,7 @@ export const fetchCategoryById = createAsyncThunk(
   async ({ id, jwt }, { rejectWithValue }) => {
     try {
       const response = await api.get(`/api/category/${id}`, {
-        headers: { Authorization: jwt },
+        headers: { Authorization: `Bearer ${jwt}` },
       });
       console.log("Fetched category:", response.data);
       return response.data;
@@ -39,13 +39,12 @@ export const fetchCategoryById = createAsyncThunk(
   }
 );
 
-// Create a new food category
 export const createCategory = createAsyncThunk(
   "category/createCategory",
   async ({ categoryData, jwt }, { rejectWithValue }) => {
     try {
       const response = await api.post("/api/admin/category", categoryData, {
-        headers: { Authorization: jwt },
+        headers: { Authorization: `Bearer ${jwt}` },
       });
       console.log("Created category:", response.data);
       return response.data;

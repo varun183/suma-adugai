@@ -6,29 +6,23 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import FoodCard from "../../components/FoodCard/FoodCard";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchAllFoodsByCategory,
-  fetchFoodByCategory,
-} from "../../../State/Customers/Menu/customerMenuThunks";
-import { useEffect } from "react";
+import { fetchFoodByCategory } from "../../../State/Customers/Menu/customerMenuThunks";
 import { fetchAllCategories } from "../../../State/Customers/Category/categoryThunks";
 
 const foodTypes = [
   { label: "All", value: "all" },
-  { label: "Vegetarion only", value: "vegetarian" },
-  { label: "Non-Vegetarion only", value: "non_vegetarian" },
-  { label: "Seasonal", value: "seasonal" },
+  { label: "Vegetarian only", value: "vegetarian" },
+  { label: "Non-Vegetarian only", value: "non_vegetarian" },
 ];
 
 const Menu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // Added location hook
-  const { id } = useParams();
+  const location = useLocation();
   const jwt = localStorage.getItem("jwt");
 
   const decodedQueryString = decodeURIComponent(location.search);
@@ -39,7 +33,6 @@ const Menu = () => {
   const { foodsByCategory } = useSelector((state) => state.customerMenu);
   const { categories } = useSelector((state) => state.category);
 
-  // Simplified filter handler
   const handleFilter = (e) => {
     const newSearchParams = new URLSearchParams(location.search);
     const { name, value } = e.target;
@@ -54,18 +47,16 @@ const Menu = () => {
     navigate({ search: query ? `?${query}` : "" });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const filters = {
       categoryName: foodCategory && foodCategory !== "all" ? foodCategory : "",
       vegetarian: foodType === "vegetarian",
       isNonveg: foodType === "non_vegetarian",
-      seasonal: foodType === "seasonal",
       jwt,
     };
-
     dispatch(fetchFoodByCategory(filters));
     dispatch(fetchAllCategories({ jwt }));
-  }, [foodCategory, foodType, dispatch, jwt]); // Added missing dependencies
+  }, [foodCategory, foodType, dispatch, jwt]);
 
   return (
     <div className="px-5 lg:px-20">
@@ -77,64 +68,66 @@ const Menu = () => {
           </p>
         </div>
       </section>
+
       <Divider />
 
       <section className="pt-8 lg:flex relative">
+        {/* Left Sidebar (Filters) */}
         <div className="space-y-10 lg:w-[20%] filter">
           <div className="box space-y-5 lg:sticky top-28">
-            <div>
-              <Typography variant="h5" sx={{ pb: 2 }}>
-                Food Type
-              </Typography>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  name="food_type"
-                  value={foodType || "all"}
-                  onChange={handleFilter}
-                >
-                  {foodTypes.map((item) => (
-                    <FormControlLabel
-                      key={item.value}
-                      value={item.value}
-                      control={<Radio />}
-                      label={item.label}
-                      sx={{ color: "gray" }}
-                    />
-                  ))}
-                </RadioGroup>
-                <Divider sx={{ my: 3 }} />
-                <Typography variant="h5" sx={{ pb: 2 }}>
-                  Food Categories
-                </Typography>
-                <RadioGroup
-                  name="food_category"
-                  value={foodCategory || "all"}
-                  onChange={handleFilter}
-                >
+            <Typography variant="h5" sx={{ pb: 2 }}>
+              Food Type
+            </Typography>
+            <FormControl component="fieldset">
+              <RadioGroup
+                name="food_type"
+                value={foodType || "all"}
+                onChange={handleFilter}
+              >
+                {foodTypes.map((item) => (
                   <FormControlLabel
-                    value="all"
+                    key={item.value}
+                    value={item.value}
                     control={<Radio />}
-                    label="All"
+                    label={item.label}
                     sx={{ color: "gray" }}
                   />
-                  {categories?.map((item) => (
-                    <FormControlLabel
-                      key={item.id}
-                      value={item.name}
-                      control={<Radio />}
-                      label={item.name}
-                      sx={{ color: "gray" }}
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            </div>
+                ))}
+              </RadioGroup>
+
+              <Divider sx={{ my: 3 }} />
+              <Typography variant="h5" sx={{ pb: 2 }}>
+                Food Categories
+              </Typography>
+              <RadioGroup
+                name="food_category"
+                value={foodCategory || "all"}
+                onChange={handleFilter}
+              >
+                <FormControlLabel
+                  value="all"
+                  control={<Radio />}
+                  label="All"
+                  sx={{ color: "gray" }}
+                />
+                {categories?.map((cat) => (
+                  <FormControlLabel
+                    key={cat.id}
+                    value={cat.name}
+                    control={<Radio />}
+                    label={cat.name}
+                    sx={{ color: "gray" }}
+                  />
+                ))}
+              </RadioGroup>
+            </FormControl>
           </div>
         </div>
 
+        {/* Right Grid (Food List) */}
         <div className="lg:w-[80%] space-y-5 lg:pl-10">
-          {foodsByCategory.map((item) => (
-            <FoodCard key={item.id} item={item} />
+          {foodsByCategory.map((foodItem) => (
+            <FoodCard key={foodItem.id} item={foodItem} />
           ))}
         </div>
       </section>

@@ -43,11 +43,8 @@ public class Food {
 	
 	private boolean isVegetarian;
 	private boolean isNonVeg;
-	private boolean isSeasonal;
-	
-	@ManyToMany
-	private List<IngredientsItem> ingredients = new ArrayList<>();
-	
+
+
 	private Date creationDate;
 	
 	

@@ -1,7 +1,6 @@
 package com.sumadugai.request;
 
 import com.sumadugai.model.Category;
-import com.sumadugai.model.IngredientsItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,16 +20,14 @@ public class CreateFoodRequest {
 
 
     private Category category;
-    private List<String> image;
+    private List<String> images;
 
 
 
     private boolean vegetarian;
     private boolean nonveg;
-    private boolean seasonal;
 
 
-    private List<IngredientsItem> ingredients;
 
 
 }

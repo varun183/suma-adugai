@@ -60,9 +60,11 @@ export const getUser = createAsyncThunk(
   "auth/getUser",
   async (token, { rejectWithValue }) => {
     try {
+      console.log("User jwt", token);
       const response = await axios.get(`${API_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       console.log("User profile", response.data);
       return response.data;
     } catch (error) {

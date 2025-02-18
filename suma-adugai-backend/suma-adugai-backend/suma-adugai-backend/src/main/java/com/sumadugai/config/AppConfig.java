@@ -28,7 +28,6 @@ public class AppConfig {
 
 	        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 	                .authorizeHttpRequests(Authorize -> Authorize
-									.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
 									.requestMatchers("/api/admin/**").hasAnyRole("MANAGER","ADMIN")
 	                                .requestMatchers("/api/**").authenticated()
 	                                

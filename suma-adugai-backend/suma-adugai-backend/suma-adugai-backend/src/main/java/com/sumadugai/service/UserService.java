@@ -13,7 +13,7 @@ public interface UserService {
 
     public List<User> findAllUsers();
 
-    public List<User> getPenddingRestaurantOwner();
+
 
     void updatePassword(User user, String newPassword);
 

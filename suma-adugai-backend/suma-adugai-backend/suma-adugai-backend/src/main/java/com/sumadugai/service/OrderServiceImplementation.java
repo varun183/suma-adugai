@@ -9,6 +9,7 @@ import com.sumadugai.repository.OrderItemRepository;
 import com.sumadugai.repository.OrderRepository;
 import com.sumadugai.repository.UserRepository;
 import com.sumadugai.request.CreateOrderRequest;
+import com.sumadugai.response.PaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,27 +32,29 @@ public class OrderServiceImplementation implements OrderService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PaymentService paymentService;
 
 
 
 
     @Override
-    public Order createOrder(CreateOrderRequest order,User user) throws Exception {
+    public PaymentResponse createOrder(CreateOrderRequest order,User user) throws Exception {
 
         Address shippAddress = order.getDeliveryAddress();
-        System.out.println(shippAddress);
+        // Check if the address already exists in the database
+        Optional<Address> existingAddress = addressRepository.findById(shippAddress.getId());
+        Address savedAddress;
 
+        // Use the existing address
+        // Save the new address
+        savedAddress = existingAddress.orElseGet(() -> addressRepository.save(shippAddress));
 
-        Address savedAddress = addressRepository.save(shippAddress);
-
-        if(!user.getAddresses().contains(savedAddress)) {
+        // Ensure the address is associated with the user
+        if (!user.getAddresses().contains(savedAddress)) {
             user.getAddresses().add(savedAddress);
+            userRepository.save(user);
         }
-
-
-        System.out.println("user addresses --------------  "+user.getAddresses());
-
-        userRepository.save(user);
 
 
 
@@ -69,7 +72,7 @@ public class OrderServiceImplementation implements OrderService {
         for (CartItem cartItem : cart.getItems()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setFood(cartItem.getFood());
-            orderItem.setIngredients(cartItem.getIngredients());
+
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setTotalPrice(cartItem.getFood().getPrice()* cartItem.getQuantity());
 
@@ -86,7 +89,8 @@ public class OrderServiceImplementation implements OrderService {
 
 
 
-        return savedOrder;
+        PaymentResponse res=paymentService.generatePaymentLink(savedOrder);
+        return res;
 
     }
 
@@ -100,6 +104,19 @@ public class OrderServiceImplementation implements OrderService {
 
         orderRepository.deleteById(orderId);
 
+    }
+
+    @Override
+    public List<Order> getAllOrders(String order_status) {
+
+
+
+        if(order_status!=null) {
+            return orderRepository.findOrderByOrderStatus(order_status);
+        }
+
+
+        return orderRepository.findAll();
     }
 
     public Order findOrderById(Long orderId) throws OrderException {

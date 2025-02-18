@@ -12,7 +12,9 @@ const PaymentSuccess = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(clearCart());
+    setTimeout(() => {
+      dispatch(clearCart());
+    }, 2000); // Wait for 2 seconds before clearing cart
   }, []);
 
   return (

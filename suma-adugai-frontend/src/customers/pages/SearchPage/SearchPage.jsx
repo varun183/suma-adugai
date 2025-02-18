@@ -11,7 +11,7 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const { categories, loading, error } = useSelector((state) => state.category);
-  const jwt = localStorage.getItem("jwt"); // Get token if needed for API call
+  const jwt = localStorage.getItem("jwt");
 
   // Fetch categories when component mounts
   useEffect(() => {

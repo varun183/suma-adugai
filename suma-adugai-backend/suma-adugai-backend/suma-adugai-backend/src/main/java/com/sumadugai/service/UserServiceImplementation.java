@@ -41,10 +41,7 @@ public class UserServiceImplementation implements UserService {
         return List.of();
     }
 
-    @Override
-    public List<User> getPenddingRestaurantOwner() {
-        return List.of();
-    }
+
 
     @Override
     public void updatePassword(User user, String newPassword) {

@@ -46,10 +46,10 @@ public class MenuItemController {
     @GetMapping("/category")
     public ResponseEntity<List<Food>> getFoodByCategory(
             @RequestParam(required = false) String categoryName, // Accepting category name as a parameter
-            Boolean isVegetarian,
-            Boolean isNonveg,
-            Boolean isSeasonal,
+            @RequestParam(required = false) Boolean isVegetarian,
+            @RequestParam(required = false) Boolean isNonveg,
             @RequestHeader(value = "Authorization",required = false)String jwt
+
     ) throws Exception {
 
         if (jwt != null && !jwt.isEmpty()) {
@@ -57,8 +57,8 @@ public class MenuItemController {
         }
 
         List<Food> foods = menuItemService.getFoodByCategoryNameAndFilters( categoryName, isVegetarian,
-                isNonveg,
-                isSeasonal);
+                isNonveg
+                );
         return ResponseEntity.ok(foods);
     }
 

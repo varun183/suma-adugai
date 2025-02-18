@@ -78,9 +78,7 @@ const RegistrationForm = () => {
               id="role"
             >
               <MenuItem value="ROLE_CUSTOMER">Customer</MenuItem>
-              <MenuItem value="ROLE_RESTAURANT_OWNER">
-                Restaurant Owner
-              </MenuItem>
+              <MenuItem value="ROLE_ADMIN">ADMIN</MenuItem>
             </Field>
             <Button
               type="submit"
