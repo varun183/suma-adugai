@@ -38,7 +38,12 @@ public class MenuItemController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Food>> searchFood(
-            @RequestParam String name) {
+            @RequestParam String name,@RequestHeader(value = "Authorization",required = false)String jwt) throws Exception {
+
+        if (jwt != null && !jwt.isEmpty()) {
+            User user = userService.findUserProfileByJwt(jwt);
+        }
+
         List<Food> menuItem = menuItemService.searchFood(name);
         return ResponseEntity.ok(menuItem);
     }

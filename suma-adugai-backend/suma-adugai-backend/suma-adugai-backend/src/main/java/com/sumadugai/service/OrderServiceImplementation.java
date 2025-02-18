@@ -80,7 +80,19 @@ public class OrderServiceImplementation implements OrderService {
             orderItems.add(savedOrderItem);
         }
 
-        Long totalPrice = cartService.calculateCartTotals(cart);
+        Long itemTotal = cartService.calculateCartTotals(cart);
+        // Define extra fees
+        Long deliveryFee = 21L;
+        Long platformFee = 5L;
+
+        Long gstAndCharges = 33L;
+        // Calculate the complete total amount (item total + fees)
+        Long totalPrice = itemTotal + deliveryFee + platformFee + gstAndCharges;
+
+        // Set the total amount including extra fees
+        createdOrder.setTotalAmount(totalPrice);
+
+
 
         createdOrder.setTotalAmount(totalPrice);
 

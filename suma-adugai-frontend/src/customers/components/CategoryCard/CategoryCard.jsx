@@ -6,7 +6,7 @@ const CategoryCard = ({ category }) => {
   const navigate = useNavigate();
 
   const navigateToMenu = () => {
-    navigate(`/menu?category=${category.id}`);
+    navigate(`/menu?food_category=${category.name}`);
   };
 
   return (

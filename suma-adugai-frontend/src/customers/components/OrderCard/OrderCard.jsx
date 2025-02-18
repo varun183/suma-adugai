@@ -1,20 +1,33 @@
-import { Button, Card } from "@mui/material";
+import { Card, Typography } from "@mui/material";
 import React from "react";
 
-const OrderCard = ({ order, status }) => {
+const OrderCard = ({ order }) => {
   return (
-    <Card className="flex justify-between items-center p-5 ">
-      <div className="flex items-center space-x-5">
-        <img className="h-16 w-16" src={order.food.images[0]} alt="" />
-        <div>
-          <p>{order.food.name}</p>
-          <p className="text-gray-400">₹{order.food.price}</p>
+    <Card className="flex justify-between items-center p-5">
+      <div className="flex flex-col">
+        {/* Row of small images */}
+        <div className="flex space-x-2">
+          {order.items.map((item, index) => (
+            <img
+              key={index}
+              src={item.food.images[0]}
+              alt={item.food.name}
+              className="h-10 w-10 object-cover rounded"
+            />
+          ))}
+        </div>
+        {/* Order status */}
+        <div className="mt-2">
+          <Typography variant="body2" className="text-white">
+            Status: {order.orderStatus}
+          </Typography>
         </div>
       </div>
+      {/* Total amount on the right */}
       <div>
-        <Button className="cursor-not-allowed" variant="contained">
-          {status}
-        </Button>
+        <Typography variant="h6" className="text-white">
+          ₹{order.totalAmount}
+        </Typography>
       </div>
     </Card>
   );

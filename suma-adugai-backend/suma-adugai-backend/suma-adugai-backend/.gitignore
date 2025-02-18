@@ -34,5 +34,7 @@ build/
 /.apt_generated_tests/
 
 ### Ignore application.properties ###
+**/src/main/resources/application.properties
 suma-adugai-backend/suma-adugai-backend/suma-adugai-backend/src/main/resources/application.properties
+
 

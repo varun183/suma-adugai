@@ -102,12 +102,7 @@ export const removeCartItem = createAsyncThunk(
 // 🔹 Clear Cart
 export const clearCart = createAsyncThunk(
   "cart/clearCart",
-  async (_, { getState, rejectWithValue }) => {
-    const state = getState();
-
-    if (!state.cart.cartItems.length)
-      return rejectWithValue("Cart is already empty.");
-
+  async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.put(
         `${API_URL}/api/cart/clear`,
@@ -118,7 +113,7 @@ export const clearCart = createAsyncThunk(
           },
         }
       );
-      return data;
+      return data; // Expecting data to be the cleared cart (with empty items and total 0)
     } catch (error) {
       return rejectWithValue(error.message);
     }

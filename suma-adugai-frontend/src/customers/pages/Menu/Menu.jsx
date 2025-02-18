@@ -4,9 +4,10 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FoodCard from "../../components/FoodCard/FoodCard";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,6 +34,10 @@ const Menu = () => {
   const { foodsByCategory } = useSelector((state) => state.customerMenu);
   const { categories } = useSelector((state) => state.category);
 
+  // Local state for food search and category search
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categorySearchTerm, setCategorySearchTerm] = useState("");
+
   const handleFilter = (e) => {
     const newSearchParams = new URLSearchParams(location.search);
     const { name, value } = e.target;
@@ -57,6 +62,17 @@ const Menu = () => {
     dispatch(fetchFoodByCategory(filters));
     dispatch(fetchAllCategories({ jwt }));
   }, [foodCategory, foodType, dispatch, jwt]);
+
+  // Filter foodsByCategory based on searchTerm (case insensitive)
+  const filteredFoods = foodsByCategory.filter((food) =>
+    food.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Filter categories based on categorySearchTerm (case insensitive)
+  const filteredCategories =
+    categories?.filter((cat) =>
+      cat.name.toLowerCase().includes(categorySearchTerm.toLowerCase())
+    ) || [];
 
   return (
     <div className="px-5 lg:px-20">
@@ -96,9 +112,22 @@ const Menu = () => {
               </RadioGroup>
 
               <Divider sx={{ my: 3 }} />
+
               <Typography variant="h5" sx={{ pb: 2 }}>
                 Food Categories
               </Typography>
+
+              {/* Category Search Bar */}
+              <TextField
+                size="small"
+                variant="outlined"
+                placeholder="Search categories"
+                value={categorySearchTerm}
+                onChange={(e) => setCategorySearchTerm(e.target.value)}
+                fullWidth
+                sx={{ mb: 2 }}
+              />
+
               <RadioGroup
                 name="food_category"
                 value={foodCategory || "all"}
@@ -110,7 +139,7 @@ const Menu = () => {
                   label="All"
                   sx={{ color: "gray" }}
                 />
-                {categories?.map((cat) => (
+                {filteredCategories.map((cat) => (
                   <FormControlLabel
                     key={cat.id}
                     value={cat.name}
@@ -126,7 +155,17 @@ const Menu = () => {
 
         {/* Right Grid (Food List) */}
         <div className="lg:w-[80%] space-y-5 lg:pl-10">
-          {foodsByCategory.map((foodItem) => (
+          {/* Food Name Search Bar */}
+          <TextField
+            variant="outlined"
+            placeholder="Search food by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            fullWidth
+            sx={{ marginBottom: 3 }}
+          />
+
+          {filteredFoods.map((foodItem) => (
             <FoodCard key={foodItem.id} item={foodItem} />
           ))}
         </div>
